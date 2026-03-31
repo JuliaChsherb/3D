@@ -1,0 +1,15 @@
+# Игнорировать всё
+*
+
+# Отслеживать только в папке src
+!ImageViewer_template/src/*.cpp
+!ImageViewer_template/src/*.h
+!ImageViewer_template/src/*.ui
+
+# Отслеживать сам .gitignore
+!.gitignore
+
+# Игнорировать всё остальное
+ImageViewer_template/build/
+ImageViewer_template/CMakeLists.txt
+ImageViewer_template/*.qrc
