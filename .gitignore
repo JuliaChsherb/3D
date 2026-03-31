@@ -1,15 +1,28 @@
-# Игнорировать всё
-*
+# Игнорировать всё в корне
+/*
 
-# Отслеживать только в папке src
-!ImageViewer_template/src/*.cpp
-!ImageViewer_template/src/*.h
-!ImageViewer_template/src/*.ui
+# Но НЕ игнорировать папку с исходниками
+!/ImageViewer_template/
+!/ImageViewer_template/src/
+
+# Отслеживать .cpp и .h файлы
+!**/*.cpp
+!**/*.h
+!**/*.ui
 
 # Отслеживать сам .gitignore
 !.gitignore
 
-# Игнорировать всё остальное
+# Игнорировать папку build внутри ImageViewer_template
 ImageViewer_template/build/
-ImageViewer_template/CMakeLists.txt
-ImageViewer_template/*.qrc
+
+# Игнорировать временные и системные файлы
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+.DS_Store
+Thumbs.db
+desktop.ini
