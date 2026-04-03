@@ -119,18 +119,12 @@ void ViewerWidget::drawLine(QPoint start, QPoint end, QColor color, int algType)
 {
 	if (!img || !data) return;
 
-	/*if (algType == 0) {
+	if (algType == 0) {
 		drawLineDDA(start, end, color);
 	}
 	else {
 		drawLineBresenham(start, end, color);
 	}
-	update();*/
-
-	//Po implementovani drawLineDDA a drawLineBresenham treba vymazat
-	QPainter painter(img);
-	painter.setPen(QPen(color));
-	painter.drawLine(start, end);
 	update();
 }
 
@@ -143,6 +137,50 @@ void ViewerWidget::clear()
 
 void ViewerWidget::drawLineDDA(QPoint start, QPoint end, QColor color)
 {
+	int x1 = start.x(), y1 = start.y();
+	int x2 = end.x(), y2 = end.y();
+
+	double dx = x2 - x1;
+	double dy = y2 - y1;
+
+	//  Prvý vykreslený pixel bude bod (x1, y1)
+	if (dx == 0 && dy == 0) {
+		setPixel(x1, y1, color);
+		return;
+	}
+
+	if (abs(dx) >= abs(dy)) {
+		// Algoritmus DDA pre riadiacu os x
+		if (x1 > x2) {
+			std::swap(x1, x2);
+			std::swap(y1, y2);
+			dx = -dx; dy = -dy;
+		}
+
+		double y = y1;
+		double m = dy / dx;
+
+		for (int x = x1; x <= x2; x++) {
+			setPixel(x, (int)round(y), color);
+			y += m;  // x + 1, y + dy/dx
+		}
+	}
+	else {
+		// Algoritmus DDA  pre riadiacu os y
+		if (y1 > y2) {
+			std::swap(x1, x2);
+			std::swap(y1, y2);
+			dx = -dx; dy = -dy;
+		}
+
+		double x = x1;
+		double m = dx / dy;
+
+		for (int y = y1; y <= y2; y++) {
+			setPixel((int)round(x), y, color);
+			x += m;  // y + 1, x + dx/dy
+		}
+	}
 }
 
 void ViewerWidget::drawLineBresenham(QPoint start, QPoint end, QColor color)
