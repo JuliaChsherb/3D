@@ -185,6 +185,88 @@ void ViewerWidget::drawLineDDA(QPoint start, QPoint end, QColor color)
 
 void ViewerWidget::drawLineBresenham(QPoint start, QPoint end, QColor color)
 {
+	int x1 = start.x(), y1 = start.y();
+	int x2 = end.x(), y2 = end.y();
+
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+
+	if (abs(dx) >= abs(dy)) {
+		// Bresenhamovalgoritmus pre riadiacu os x
+		if (x1 > x2) {
+			std::swap(x1, x2);
+			std::swap(y1, y2);
+			dx = -dx; dy = -dy;
+		}
+
+		int x = x1, y = y1;
+		setPixel(x, y, color);
+
+		if (dy >= 0) {
+			// 0 < m < 1
+			int k1 = 2 * dy;
+			int k2 = 2 * dy - 2 * dx;
+			int p = 2 * dy - dx;
+
+			while (x < x2) {
+				x++;
+				if (p > 0) { y++; p += k2; }
+				else { p += k1; }
+				setPixel(x, y, color);
+			}
+		}
+		else {
+			// -1 < m < 0
+			int k1 = 2 * dy;
+			int k2 = 2 * dy + 2 * dx;
+			int p = 2 * dy + dx;
+
+			while (x < x2) {
+				x++;
+				if (p < 0) { y--; p += k2; }
+				else { p += k1; }
+				setPixel(x, y, color);
+			}
+		}
+	}
+	else {
+		// Bresenhamovalgoritmus pre riadiacu os y
+		if (y1 > y2) {
+			std::swap(x1, x2);
+			std::swap(y1, y2);
+			dx = -dx; dy = -dy;
+		}
+
+		int x = x1, y = y1;
+		setPixel(x, y, color);
+
+		if (dx >= 0) {
+			// m > 1
+			int k1 = 2 * dx;
+			int k2 = 2 * dx - 2 * dy;
+			int p = 2 * dx - dy;
+
+			while (y < y2) {
+				y++;
+				if (p > 0) { x++; p += k2; }
+				else { p += k1; }
+				setPixel(x, y, color);
+			}
+		}
+		else {
+			// m < -1
+			int k1 = 2 * dx;
+			int k2 = 2 * dx + 2 * dy;
+			int p = 2 * dx + dy;
+
+			while (y < y2) {
+				y++;
+				if (p < 0) { x--; p += k2; }
+				else { p += k1; }
+				setPixel(x, y, color);
+			}
+		}
+	}
 }
 
 //Slots
