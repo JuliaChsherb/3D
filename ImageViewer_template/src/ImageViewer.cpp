@@ -182,3 +182,84 @@ void ImageViewer::on_pushButtonSetColor_clicked()
 		globalColor = newColor;
 	}
 }
+
+// spôsob uchovania povrchovej reprezentácie: Ukazovatele do zoznamu vrcholov
+bool ImageViewer::saveCubeToVTK(double s, const QString& path)
+{
+	//   3 ──── 2       7 ──── 6
+	//   |      |       |      |
+	//   0 ──── 1       4 ──── 5
+
+	struct Vertex { double x, y, z; };
+
+	QVector<Vertex> verts = {
+		{0, 0, 0}, {s, 0, 0}, {s, s, 0}, {0, s, 0},  // V0-V3
+		{0, 0, s}, {s, 0, s}, {s, s, s}, {0, s, s}   // V4-V7
+	};
+
+	struct Triangle { int v[3]; };
+
+	QVector<Triangle> tris = {
+		// (z = 0)
+		{{0, 2, 1}},  {{0, 3, 2}},
+		// (z = s)
+		{{4, 5, 6}},  {{4, 6, 7}},
+		// (y = 0)
+		{{0, 1, 5}},  {{0, 5, 4}},
+		// (y = s)
+		{{3, 6, 2}},  {{3, 7, 6}},
+		// (x = 0)
+		{{0, 4, 7}},  {{0, 7, 3}},
+		// (x = s)
+		{{1, 2, 6}},  {{1, 6, 5}}
+	};
+
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		return false;
+	}
+
+	QTextStream out(&file);
+
+	out << "# vtk DataFile Version 3.0\n";
+	out << "cube\n";
+	out << "ASCII\n";
+	out << "DATASET POLYDATA\n\n";
+
+	out << "POINTS " << verts.size() << " float\n";
+	for (auto& v : verts) {
+		out << v.x << " " << v.y << " " << v.z << "\n";
+	}
+
+	out << "\nPOLYGONS " << tris.size() << " " << tris.size() * 4 << "\n";
+	for (auto& t : tris) {
+		out << "3 " << t.v[0] << " " << t.v[1] << " " << t.v[2] << "\n";
+	}
+
+	file.close();
+	return true;
+}
+
+void ImageViewer::on_pushButtonGenerateCube_clicked()
+{
+	double size = ui->spinBoxDiceLenght->value();
+
+	QString folderPath = "D:/JuliaEv/PG2026/3D/ImageViewer_template/VTK files";
+
+	QDir dir;
+	if (!dir.exists(folderPath)) {
+		dir.mkpath(folderPath);
+	}
+
+	QString fileName = folderPath + "/cube_" + QString::number(size) + ".vtk";
+
+	if (saveCubeToVTK(size, fileName)) {
+		msgBox.setText(QString("Cube saved successfully to:\n%1").arg(fileName));
+		msgBox.setIcon(QMessageBox::Information);
+	}
+	else {
+		msgBox.setText(QString("Failed to save cube to:\n%1").arg(fileName));
+		msgBox.setIcon(QMessageBox::Warning);
+	}
+	msgBox.exec();
+}

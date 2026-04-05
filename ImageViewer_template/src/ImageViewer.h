@@ -39,6 +39,8 @@ private:
 	bool openImage(QString filename);
 	bool saveImage(QString filename);
 
+	bool saveCubeToVTK(double size, const QString& path);
+
 private slots:
 	void on_actionOpen_triggered();
 	void on_actionSave_as_triggered();
@@ -47,4 +49,5 @@ private slots:
 
 	//Tools slots
 	void on_pushButtonSetColor_clicked();
+	void on_pushButtonGenerateCube_clicked();
 };
