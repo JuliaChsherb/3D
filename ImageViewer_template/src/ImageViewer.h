@@ -40,6 +40,7 @@ private:
 	bool saveImage(QString filename);
 
 	bool saveCubeToVTK(double size, const QString& path);
+	bool saveOctasphereToVTK(int subdivisions, double radius, const QString& path);
 
 private slots:
 	void on_actionOpen_triggered();
@@ -50,4 +51,5 @@ private slots:
 	//Tools slots
 	void on_pushButtonSetColor_clicked();
 	void on_pushButtonGenerateCube_clicked();
+	void on_pushButtonGenerateOctasphere_clicked();
 };
